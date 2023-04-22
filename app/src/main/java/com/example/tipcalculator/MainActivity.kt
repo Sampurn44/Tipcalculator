@@ -3,10 +3,10 @@ package com.example.tipcalculator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,10 +22,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.node.modifierElementOf
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -56,7 +54,9 @@ class MainActivity : ComponentActivity() {
 fun TipTimeScreen(){
     var amountInput by remember { mutableStateOf("") }
     val amount= amountInput.toDoubleOrNull()?:0.0
-    val tip = CalculateTip(amount)
+    var tipInput by remember { mutableStateOf("") }
+    val tipPercentage= tipInput.toDoubleOrNull()?:0.0
+    val tip = CalculateTip(amount,tipPercentage)
 
     Column(modifier = Modifier.padding(32.dp), verticalArrangement = Arrangement.spacedBy(8.dp) ) {
         Text(
@@ -65,7 +65,9 @@ fun TipTimeScreen(){
             modifier= Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        EditNumber(value=amountInput, onValueChange = {amountInput=it})
+        EditNumber(label=R.string.bill_amount, value=amountInput, onValueChange = {amountInput=it})
+        Spacer(modifier = Modifier.height(16.dp))
+        EditNumber(label=R.string.how_service, value=tipInput, onValueChange = {tipInput=it})
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = stringResource(id=R.string.tip_amount,tip),
@@ -78,13 +80,13 @@ fun TipTimeScreen(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditNumber(value: String, onValueChange:(String)-> Unit){
+fun EditNumber(@StringRes label: Int, value: String, onValueChange:(String)-> Unit,modifier: Modifier=Modifier ){
 
     TextField(
         value = value,
         onValueChange =onValueChange,
         label = { Text(
-            text = stringResource(id = R.string.bill_amount),
+            text = stringResource(id = label),
             modifier = Modifier.fillMaxWidth() )},
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true
