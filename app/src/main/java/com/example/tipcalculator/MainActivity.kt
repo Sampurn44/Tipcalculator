@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -67,7 +68,7 @@ fun TipTimeScreen(){
     var tipInput by remember { mutableStateOf("") }
     val tipPercentage= tipInput.toDoubleOrNull()?:0.0
     var roundUp by remember { mutableStateOf(false) }
-    val tip = CalculateTip(amount,tipPercentage,roundUp)
+    val tip = calculateTip(amount,tipPercentage,roundUp)
     val focusManager = LocalFocusManager.current
     Column(modifier = Modifier.padding(32.dp), verticalArrangement = Arrangement.spacedBy(8.dp) ) {
         Text(
@@ -144,7 +145,8 @@ fun TipToggle(
         )
     }
 }
-private fun CalculateTip(Amount:Double,tipPercentage : Double,Roundup: Boolean): String
+@VisibleForTesting
+internal fun calculateTip(Amount:Double,tipPercentage : Double,Roundup: Boolean): String
 {
 var tip = (tipPercentage/100) * Amount
    if(Roundup){
